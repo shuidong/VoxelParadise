@@ -26,6 +26,8 @@ public class GenerateChunks : MonoBehaviour
 	public int chunkX;
 	public int chunkY;
 	public int chunkZ;
+
+	public bool update;
 	// Use this for initialization
 	private void Start()
 	{
@@ -164,7 +166,7 @@ public class GenerateChunks : MonoBehaviour
 
 		Cube(texturePos);
 	}
-	void GenerateMesh()
+	public void GenerateMesh()
 	{
 
 		for (int x = 0; x < chunkSize; x++)
@@ -232,5 +234,14 @@ public class GenerateChunks : MonoBehaviour
 	byte Block(int x, int y, int z)
 	{
 		return world.Block(x + chunkX, y + chunkY, z + chunkZ);
+	}
+
+	void LateUpdate()
+	{
+		if (update)
+		{
+			GenerateMesh();
+			update = false;
+		}
 	}
 }
