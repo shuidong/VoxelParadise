@@ -21,7 +21,7 @@ public class ModifyTerrain : MonoBehaviour {
 		{
 			AddBlockCenter(5, 255);
 		}
-		LoadChunks(GameObject.FindGameObjectWithTag("Player").transform.position, 3200, 4800);
+		LoadChunks(GameObject.FindGameObjectWithTag("Player").transform.position, 32, 48); //change the last two values to increase chunk loading distance
 	}
 
 	public void ReplaceBlockCenter(float range, byte block)
