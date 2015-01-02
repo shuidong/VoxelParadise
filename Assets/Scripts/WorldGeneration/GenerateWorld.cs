@@ -127,4 +127,9 @@ public class GenerateWorld : MonoBehaviour
 
 		}
 	}
+
+	public Vector3 GetSizeWorld()
+	{
+		return new Vector3(worldX, worldY, worldZ);
+	}
 }
