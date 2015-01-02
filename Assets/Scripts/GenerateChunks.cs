@@ -12,9 +12,11 @@ public class GenerateChunks : MonoBehaviour
 	private List<Vector2> newUV = new List<Vector2>();
 
 	private float tUnit = 0.25f;
-	private Vector2 tStone = new Vector2(1, 0);
-	private Vector2 tGrass = new Vector2(0, 1);
-	private Vector2 tGrassTop = new Vector2(1, 1);
+	private Vector2 tStone = new Vector2(0, 0);
+	private Vector2 tGrass = new Vector2(3, 0);
+	private Vector2 tDirt = new Vector2(1, 0);
+	private Vector2 tGrassTop = new Vector2(2, 0);
+	private Vector2 tWater = new Vector2(0, 1);
 
 	private Mesh mesh;
 	private MeshCollider col;
@@ -168,7 +170,6 @@ public class GenerateChunks : MonoBehaviour
 	}
 	public void GenerateMesh()
 	{
-
 		for (int x = 0; x < chunkSize; x++)
 		{
 			for (int y = 0; y < chunkSize; y++)
@@ -179,8 +180,6 @@ public class GenerateChunks : MonoBehaviour
 
 					if (Block(x, y, z) != 0)
 					{
-						//If the block is solid
-
 						if (Block(x, y + 1, z) == 0)
 						{
 							//Block above is air
@@ -221,9 +220,7 @@ public class GenerateChunks : MonoBehaviour
 							CubeSouth(x, y, z, Block(x, y, z));
 
 						}
-
 					}
-
 				}
 			}
 		}

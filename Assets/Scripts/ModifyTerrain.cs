@@ -14,14 +14,14 @@ public class ModifyTerrain : MonoBehaviour {
 	void Update () {
 		if (Input.GetMouseButtonDown(0))
 		{
-			ReplaceBlockCursor(0);
+			ReplaceBlockCenter(5, 0);
 		}
 
 		if (Input.GetMouseButtonDown(1))
 		{
-			AddBlockCursor(1);
+			AddBlockCenter(5, 255);
 		}
-		LoadChunks(GameObject.FindGameObjectWithTag("Player").transform.position, 3200, 4800);
+		LoadChunks(GameObject.FindGameObjectWithTag("Player").transform.position, 32, 48);
 	}
 
 	public void ReplaceBlockCenter(float range, byte block)
@@ -124,6 +124,26 @@ public class ModifyTerrain : MonoBehaviour {
 		print("Adding: " + x + ", " + y + ", " + z);
 
 
+		if (world.data[x + 1, y, z] == 254)
+		{
+			world.data[x + 1, y, z] = 255;
+		}
+		if (world.data[x - 1, y, z] == 254)
+		{
+			world.data[x - 1, y, z] = 255;
+		}
+		if (world.data[x, y, z + 1] == 254)
+		{
+			world.data[x, y, z + 1] = 255;
+		}
+		if (world.data[x, y, z - 1] == 254)
+		{
+			world.data[x, y, z - 1] = 255;
+		}
+		if (world.data[x, y + 1, z] == 254)
+		{
+			world.data[x, y + 1, z] = 255;
+		}
 		world.data[x, y, z] = block;
 		UpdateChunkAt(x, y, z);
 	}
