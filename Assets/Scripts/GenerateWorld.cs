@@ -14,26 +14,33 @@ public class GenerateWorld : MonoBehaviour
 	// Use this for initialization
 	private void Start()
 	{
+		GameObject.FindGameObjectWithTag("Player").transform.position = new Vector3(worldX * 0.5f, worldY, worldZ * 0.5f);
 		data = new byte[worldX, worldY, worldZ];
+		int radiusPlanet = worldY * chunkSize - 40;
+		int heightDif = 1500;
+
 		for (int x = 0; x < worldX; x++)
 		{
 			for (int y = 0; y < worldY; y++)
 			{
 				for (int z = 0; z < worldZ; z++)
 				{
-					// 					if (Mathf.Pow(x - worldX / 2, 2) + Mathf.Pow(y - worldY / 2, 2) + Mathf.Pow(z - worldZ / 2, 2) < PerlinNoise(x,2,y,2,z,2)+600) //Cool effect
-					// 					{
-					// 						data[x, y, z] = 1;
-					// 					}
+					// 				if (Mathf.Pow(x - worldX / 2, 2) + Mathf.Pow(y - worldY / 2, 2) + Mathf.Pow(z - worldZ / 2, 2) < PerlinNoise(x,2,y,2,z,2)+600) //Cool effect    
+					// 				{                                                                                                                                               
+					// 					data[x, y, z] = 1;                                                                                                                          
+					// 				}                                                                                                                                               
 
-					if (Mathf.Pow(x - worldX / 2, 2) + Mathf.Pow(y - worldY / 2, 2) + Mathf.Pow(z - worldZ / 2, 2) < PerlinNoise(x, 7, z, 7, 1, 1) + 7000)
+					//Debug.Log(PerlinNoise(x, y, z, 30, heightDif, 8));
+
+					int BlockDistanceFromCenter = (int)(Mathf.Pow(x - worldX / 2, 2) + Mathf.Pow(y - worldY / 2, 2) + Mathf.Pow(z - worldZ / 2, 2));
+					if (BlockDistanceFromCenter <= radiusPlanet + PerlinNoise(x, y, z, 15, heightDif, 1))
 					{
 						data[x, y, z] = 1;
 					}
-// 					if (y <= 8)
-// 					{
-// 					 	data[x, y, z] = 1;
-// 					}
+					if (y == 0)
+					{
+					 	data[x, y, z] = 1;
+					}
 				}
 			}
 		}

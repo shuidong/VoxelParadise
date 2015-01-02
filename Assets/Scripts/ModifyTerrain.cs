@@ -21,12 +21,13 @@ public class ModifyTerrain : MonoBehaviour {
 		{
 			AddBlockCenter(5, 255);
 		}
-		LoadChunks(GameObject.FindGameObjectWithTag("Player").transform.position, 32, 48);
+		LoadChunks(GameObject.FindGameObjectWithTag("Player").transform.position, 3200, 4800);
 	}
 
 	public void ReplaceBlockCenter(float range, byte block)
 	{
-		//Replaces the block directly in front of the player
+		//Replaces the block directly in front of the 
+
 		Ray ray = new Ray(cameraGO.transform.position, cameraGO.transform.forward);
 		RaycastHit hit;
 
