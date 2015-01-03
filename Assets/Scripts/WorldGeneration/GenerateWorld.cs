@@ -17,8 +17,7 @@ public class GenerateWorld : MonoBehaviour
 		GameObject.FindGameObjectWithTag("Player").transform.position = new Vector3(worldX * 0.5f, worldY, worldZ * 0.5f);
 		data = new byte[worldX, worldY, worldZ];
 		int heightDif = 1500;
-		float radiusPlanet = Mathf.Pow(worldY * 0.5f, 2) - heightDif;
-		
+		float radiusPlanet = Mathf.Pow(worldY * 0.5f, 2) - heightDif;	
 
 		for (int x = 0; x < worldX; x++)
 		{
