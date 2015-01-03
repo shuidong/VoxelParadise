@@ -16,8 +16,9 @@ public class GenerateWorld : MonoBehaviour
 	{
 		GameObject.FindGameObjectWithTag("Player").transform.position = new Vector3(worldX * 0.5f, worldY, worldZ * 0.5f);
 		data = new byte[worldX, worldY, worldZ];
-		int radiusPlanet = worldY * chunkSize - 40;
 		int heightDif = 1500;
+		float radiusPlanet = Mathf.Pow(worldY * 0.5f, 2) - heightDif;
+		
 
 		for (int x = 0; x < worldX; x++)
 		{
@@ -32,7 +33,7 @@ public class GenerateWorld : MonoBehaviour
 
 					//Debug.Log(PerlinNoise(x, y, z, 30, heightDif, 8));
 
-					int BlockDistanceFromCenter = (int)(Mathf.Pow(x - worldX / 2, 2) + Mathf.Pow(y - worldY / 2, 2) + Mathf.Pow(z - worldZ / 2, 2));
+					float BlockDistanceFromCenter = (Mathf.Pow(x - worldX / 2, 2) + Mathf.Pow(y - worldY / 2, 2) + Mathf.Pow(z - worldZ / 2, 2));
 					if (BlockDistanceFromCenter <= radiusPlanet + PerlinNoise(x, y, z, 15, heightDif, 1))
 					{
 						data[x, y, z] = 1;
