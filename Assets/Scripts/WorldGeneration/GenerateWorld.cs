@@ -33,15 +33,15 @@ public class GenerateWorld : MonoBehaviour
 
 					//Debug.Log(PerlinNoise(x, y, z, 30, heightDif, 8));
 
-					float BlockDistanceFromCenter = (Mathf.Pow(x - worldX / 2, 2) + Mathf.Pow(y - worldY / 2, 2) + Mathf.Pow(z - worldZ / 2, 2));
+					float BlockDistanceFromCenter = Mathf.Pow(x - worldX / 2, 2) + Mathf.Pow(y - worldY / 2, 2) + Mathf.Pow(z - worldZ / 2, 2);
 					if (BlockDistanceFromCenter <= radiusPlanet + PerlinNoise(x, y, z, 15, heightDif, 1))
 					{
 						data[x, y, z] = 1;
 					}
-					if (y == 0)
-					{
-					 	data[x, y, z] = 1;
-					}
+// 					if (y == 0)
+// 					{
+// 					 	data[x, y, z] = 1;
+// 					}
 				}
 			}
 		}
@@ -102,31 +102,25 @@ public class GenerateWorld : MonoBehaviour
 		return (int)rValue;
 	}
 
-	public void GenColumn(int x, int z)
+	public void GenColumn(int x, int y, int z)
 	{
-		for (int y = 0; y < chunks.GetLength(1); y++)
-		{
 
-			GameObject newChunk = Instantiate(chunk,
- new Vector3(x * chunkSize - 0.5f, y * chunkSize + 0.5f, z * chunkSize - 0.5f),
- new Quaternion(0, 0, 0, 0)) as GameObject;
+		GameObject newChunk = Instantiate(chunk,
+new Vector3(x * chunkSize - 0.5f, y * chunkSize + 0.5f, z * chunkSize - 0.5f),
+new Quaternion(0, 0, 0, 0)) as GameObject;
 
-			chunks[x, y, z] = newChunk.GetComponent("GenerateChunks") as GenerateChunks;
-			chunks[x, y, z].worldGO = gameObject;
-			chunks[x, y, z].chunkSize = chunkSize;
-			chunks[x, y, z].chunkX = x * chunkSize;
-			chunks[x, y, z].chunkY = y * chunkSize;
-			chunks[x, y, z].chunkZ = z * chunkSize;
-		}
+		chunks[x, y, z] = newChunk.GetComponent("GenerateChunks") as GenerateChunks;
+		chunks[x, y, z].worldGO = gameObject;
+		chunks[x, y, z].chunkSize = chunkSize;
+		chunks[x, y, z].chunkX = x * chunkSize;
+		chunks[x, y, z].chunkY = y * chunkSize;
+		chunks[x, y, z].chunkZ = z * chunkSize;
+
 	}
 
-	public void UnloadColumn(int x, int z)
+	public void UnloadColumn(int x,int y, int z)
 	{
-		for (int y = 0; y < chunks.GetLength(1); y++)
-		{
-			Object.Destroy(chunks[x, y, z].gameObject);
-
-		}
+		Object.Destroy(chunks[x, y, z].gameObject);
 	}
 
 	public Vector3 GetSizeWorld()

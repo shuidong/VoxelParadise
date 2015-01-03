@@ -1,22 +1,24 @@
 ﻿using UnityEngine;
-using System.Collections;
 
-public class ModifyTerrain : MonoBehaviour {
-	GenerateWorld world;
-	GameObject cameraGO;
+public class ModifyTerrain : MonoBehaviour
+{
+	private GenerateWorld world;
+	private GameObject cameraGO;
 
 	public int loadingDistance = 32;
-	public int unloadingDistance = 48;
-	int multiplierLoading = 1;
+	public int unloadingDistance = 64;
+	private int multiplierLoading = 1;
 
 	// Use this for initialization
-	void Start () {
+	private void Start()
+	{
 		world = gameObject.GetComponent("GenerateWorld") as GenerateWorld;
 		cameraGO = GameObject.FindGameObjectWithTag("MainCamera");
 	}
-	
+
 	// Update is called once per frame
-	void Update () {
+	private void Update()
+	{
 		if (Input.GetMouseButtonDown(0))
 		{
 			ReplaceBlockCenter(5, 0);
@@ -26,9 +28,9 @@ public class ModifyTerrain : MonoBehaviour {
 		{
 			AddBlockCenter(5, 255);
 		}
-		LoadChunks(GameObject.FindGameObjectWithTag("Player").transform.position, loadingDistance * multiplierLoading, unloadingDistance * multiplierLoading); //change the last two values to increase chunk loading distance
+		LoadChunks(GameObject.FindGameObjectWithTag("Player").transform.position, loadingDistance * multiplierLoading, unloadingDistance * multiplierLoading);
 
-		if (Input.GetKeyDown (KeyCode.V))
+		if (Input.GetKeyDown(KeyCode.V))
 		{
 			if (multiplierLoading == 1)
 			{
@@ -43,20 +45,18 @@ public class ModifyTerrain : MonoBehaviour {
 
 	public void ReplaceBlockCenter(float range, byte block)
 	{
-		//Replaces the block directly in front of the 
+		//Replaces the block directly in front of the
 
 		Ray ray = new Ray(cameraGO.transform.position, cameraGO.transform.forward);
 		RaycastHit hit;
 
 		if (Physics.Raycast(ray, out hit))
 		{
-
 			if (hit.distance < range)
 			{
 				ReplaceBlockAt(hit, block);
 			}
 		}
-
 	}
 
 	public void AddBlockCenter(float range, byte block)
@@ -68,7 +68,6 @@ public class ModifyTerrain : MonoBehaviour {
 
 		if (Physics.Raycast(ray, out hit))
 		{
-
 			if (hit.distance < range)
 			{
 				AddBlockAt(hit, block);
@@ -85,11 +84,9 @@ public class ModifyTerrain : MonoBehaviour {
 
 		if (Physics.Raycast(ray, out hit))
 		{
-
 			ReplaceBlockAt(hit, block);
 			Debug.DrawLine(ray.origin, ray.origin + (ray.direction * hit.distance),
 			 Color.green, 2);
-
 		}
 	}
 
@@ -101,7 +98,6 @@ public class ModifyTerrain : MonoBehaviour {
 
 		if (Physics.Raycast(ray, out hit))
 		{
-
 			AddBlockAt(hit, block);
 			Debug.DrawLine(ray.origin, ray.origin + (ray.direction * hit.distance),
 			 Color.green, 2);
@@ -141,7 +137,6 @@ public class ModifyTerrain : MonoBehaviour {
 		//adds the specified block at these coordinates
 		print("Adding: " + x + ", " + y + ", " + z);
 
-
 		if (world.data[x + 1, y, z] == 254)
 		{
 			world.data[x + 1, y, z] = 255;
@@ -168,7 +163,7 @@ public class ModifyTerrain : MonoBehaviour {
 
 	public void UpdateChunkAt(int x, int y, int z)
 	{
-		int updateX= Mathf.FloorToInt( x/world.chunkSize);
+		int updateX = Mathf.FloorToInt(x / world.chunkSize);
 		int updateY = Mathf.FloorToInt(y / world.chunkSize);
 		int updateZ = Mathf.FloorToInt(z / world.chunkSize);
 
@@ -205,32 +200,35 @@ public class ModifyTerrain : MonoBehaviour {
 			world.chunks[updateX, updateY, updateZ + 1].update = true;
 		}
 	}
+
 	public void LoadChunks(Vector3 playerPos, float distToLoad, float distToUnload)
 	{
 		for (int x = 0; x < world.chunks.GetLength(0); x++)
 		{
-			for (int z = 0; z < world.chunks.GetLength(2); z++)
+			for (int y = 0; y < world.chunks.GetLength(1); y++)
 			{
-
-				float dist = Vector2.Distance(new Vector2(x * world.chunkSize,
-				z * world.chunkSize), new Vector2(playerPos.x, playerPos.z));
-
-				if (dist < distToLoad)
+				for (int z = 0; z < world.chunks.GetLength(2); z++)
 				{
-					if (world.chunks[x, 0, z] == null)
+					float BlockDistanceFromCenter = Mathf.Pow(playerPos.x-x*16, 2) + Mathf.Pow(playerPos.y-y*16, 2) + Mathf.Pow(playerPos.z-z*16, 2);
+// 					float dist = Vector2.Distance(new Vector2(x * world.chunkSize,
+// 					z * world.chunkSize), new Vector2(playerPos.x, playerPos.z));
+					//Debug.Log("dist: "+BlockDistanceFromCenter);
+
+					if (BlockDistanceFromCenter < Mathf.Pow(distToLoad, 2))
 					{
-						world.GenColumn(x, z);
+						if (world.chunks[x, y, z] == null)
+						{
+							world.GenColumn(x,y, z);
+						}
+					}
+					else if (BlockDistanceFromCenter > Mathf.Pow(distToUnload, 2))
+					{
+						if (world.chunks[x, y, z] != null)
+						{
+							world.UnloadColumn(x,y, z);
+						}
 					}
 				}
-				else if (dist > distToUnload)
-				{
-					if (world.chunks[x, 0, z] != null)
-					{
-
-						world.UnloadColumn(x, z);
-					}
-				}
-
 			}
 		}
 	}
