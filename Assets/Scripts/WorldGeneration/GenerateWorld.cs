@@ -33,7 +33,7 @@ public class GenerateWorld : MonoBehaviour
 
 					//Debug.Log(PerlinNoise(x, y, z, 30, heightDif, 8));
 
-					float BlockDistanceFromCenter = Mathf.Pow(x - worldX / 2, 2) + Mathf.Pow(y - worldY / 2, 2) + Mathf.Pow(z - worldZ / 2, 2);
+					float BlockDistanceFromCenter = Mathf.Pow(x - worldX * 0.5f, 2) + Mathf.Pow(y - worldY * 0.5f, 2) + Mathf.Pow(z - worldZ * 0.5f, 2);
 					if (BlockDistanceFromCenter <= radiusPlanet + PerlinNoise(x, y, z, 15, heightDif, 1))
 					{
 						data[x, y, z] = 1;
