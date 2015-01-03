@@ -4,6 +4,11 @@ using System.Collections;
 public class ModifyTerrain : MonoBehaviour {
 	GenerateWorld world;
 	GameObject cameraGO;
+
+	public int loadingDistance = 32;
+	public int unloadingDistance = 48;
+	int multiplierLoading = 1;
+
 	// Use this for initialization
 	void Start () {
 		world = gameObject.GetComponent("GenerateWorld") as GenerateWorld;
@@ -21,7 +26,19 @@ public class ModifyTerrain : MonoBehaviour {
 		{
 			AddBlockCenter(5, 255);
 		}
-		LoadChunks(GameObject.FindGameObjectWithTag("Player").transform.position, 32, 48); //change the last two values to increase chunk loading distance
+		LoadChunks(GameObject.FindGameObjectWithTag("Player").transform.position, loadingDistance * multiplierLoading, unloadingDistance * multiplierLoading); //change the last two values to increase chunk loading distance
+
+		if (Input.GetKeyDown (KeyCode.V))
+		{
+			if (multiplierLoading == 1)
+			{
+				multiplierLoading = 100;
+			}
+			else
+			{
+				multiplierLoading = 1;
+			}
+		}
 	}
 
 	public void ReplaceBlockCenter(float range, byte block)
