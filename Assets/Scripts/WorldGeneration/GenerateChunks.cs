@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class GenerateChunks : MonoBehaviour
@@ -13,10 +12,10 @@ public class GenerateChunks : MonoBehaviour
 
 	private float tUnit = 0.25f;
 	private Vector2 tStone = new Vector2(0, 0);
-// 	private Vector2 tGrass = new Vector2(3, 0);
-// 	private Vector2 tDirt = new Vector2(1, 0);
-// 	private Vector2 tGrassTop = new Vector2(2, 0);
-// 	private Vector2 tWater = new Vector2(0, 1);
+	// 	private Vector2 tGrass = new Vector2(3, 0);
+	// 	private Vector2 tDirt = new Vector2(1, 0);
+	// 	private Vector2 tGrassTop = new Vector2(2, 0);
+	// 	private Vector2 tWater = new Vector2(0, 1);
 
 	private Mesh mesh;
 	private MeshCollider col;
@@ -30,34 +29,29 @@ public class GenerateChunks : MonoBehaviour
 	public int chunkZ;
 
 	public bool update;
+	bool IsSmoothMeshMode = false;
 
-	private struct GRIDCELL
+	private static int[] edgeTable = new int[]
 	{
-		public Vector3[] p; //8
-		public double[] val; //8
-	} ;
-
-	static int[] edgeTable = new int[]
-	{
-		0x000, 0x109, 0x203, 0x30a, 0x406, 0x50f, 0x605, 0x70c, 0x80c, 0x905, 0xa0f, 0xb06, 0xc0a, 0xd03, 0xe09, 0xf00, 
-		0x190, 0x099, 0x393, 0x29a, 0x596, 0x49f, 0x795, 0x69c, 0x99c, 0x895, 0xb9f, 0xa96, 0xd9a, 0xc93, 0xf99, 0xe90, 
-		0x230, 0x339, 0x033, 0x13a, 0x636, 0x73f, 0x435, 0x53c, 0xa3c, 0xb35, 0x83f, 0x936, 0xe3a, 0xf33, 0xc39, 0xd30, 
-		0x3a0, 0x2a9, 0x1a3, 0x0aa, 0x7a6, 0x6af, 0x5a5, 0x4ac, 0xbac, 0xaa5, 0x9af, 0x8a6, 0xfaa, 0xea3, 0xda9, 0xca0, 
-		0x460, 0x569, 0x663, 0x76a, 0x066, 0x16f, 0x265, 0x36c, 0xc6c, 0xd65, 0xe6f, 0xf66, 0x86a, 0x963, 0xa69, 0xb60, 
-		0x5f0, 0x4f9, 0x7f3, 0x6fa, 0x1f6, 0x0ff, 0x3f5, 0x2fc, 0xdfc, 0xcf5, 0xfff, 0xef6, 0x9fa, 0x8f3, 0xbf9, 0xaf0, 
-		0x650, 0x759, 0x453, 0x55a, 0x256, 0x35f, 0x055, 0x15c, 0xe5c, 0xf55, 0xc5f, 0xd56, 0xa5a, 0xb53, 0x859, 0x950, 
-		0x7c0, 0x6c9, 0x5c3, 0x4ca, 0x3c6, 0x2cf, 0x1c5, 0x0cc, 0xfcc, 0xec5, 0xdcf, 0xcc6, 0xbca, 0xac3, 0x9c9, 0x8c0, 
-		0x8c0, 0x9c9, 0xac3, 0xbca, 0xcc6, 0xdcf, 0xec5, 0xfcc, 0x0cc, 0x1c5, 0x2cf, 0x3c6, 0x4ca, 0x5c3, 0x6c9, 0x7c0, 
-		0x950, 0x859, 0xb53, 0xa5a, 0xd56, 0xc5f, 0xf55, 0xe5c, 0x15c, 0x055, 0x35f, 0x256, 0x55a, 0x453, 0x759, 0x650, 
-		0xaf0, 0xbf9, 0x8f3, 0x9fa, 0xef6, 0xfff, 0xcf5, 0xdfc, 0x2fc, 0x3f5, 0x0ff, 0x1f6, 0x6fa, 0x7f3, 0x4f9, 0x5f0, 
-		0xb60, 0xa69, 0x963, 0x86a, 0xf66, 0xe6f, 0xd65, 0xc6c, 0x36c, 0x265, 0x16f, 0x066, 0x76a, 0x663, 0x569, 0x460, 
-		0xca0, 0xda9, 0xea3, 0xfaa, 0x8a6, 0x9af, 0xaa5, 0xbac, 0x4ac, 0x5a5, 0x6af, 0x7a6, 0x0aa, 0x1a3, 0x2a9, 0x3a0, 
-		0xd30, 0xc39, 0xf33, 0xe3a, 0x936, 0x83f, 0xb35, 0xa3c, 0x53c, 0x435, 0x73f, 0x636, 0x13a, 0x033, 0x339, 0x230, 
-		0xe90, 0xf99, 0xc93, 0xd9a, 0xa96, 0xb9f, 0x895, 0x99c, 0x69c, 0x795, 0x49f, 0x596, 0x29a, 0x393, 0x099, 0x190, 
+		0x000, 0x109, 0x203, 0x30a, 0x406, 0x50f, 0x605, 0x70c, 0x80c, 0x905, 0xa0f, 0xb06, 0xc0a, 0xd03, 0xe09, 0xf00,
+		0x190, 0x099, 0x393, 0x29a, 0x596, 0x49f, 0x795, 0x69c, 0x99c, 0x895, 0xb9f, 0xa96, 0xd9a, 0xc93, 0xf99, 0xe90,
+		0x230, 0x339, 0x033, 0x13a, 0x636, 0x73f, 0x435, 0x53c, 0xa3c, 0xb35, 0x83f, 0x936, 0xe3a, 0xf33, 0xc39, 0xd30,
+		0x3a0, 0x2a9, 0x1a3, 0x0aa, 0x7a6, 0x6af, 0x5a5, 0x4ac, 0xbac, 0xaa5, 0x9af, 0x8a6, 0xfaa, 0xea3, 0xda9, 0xca0,
+		0x460, 0x569, 0x663, 0x76a, 0x066, 0x16f, 0x265, 0x36c, 0xc6c, 0xd65, 0xe6f, 0xf66, 0x86a, 0x963, 0xa69, 0xb60,
+		0x5f0, 0x4f9, 0x7f3, 0x6fa, 0x1f6, 0x0ff, 0x3f5, 0x2fc, 0xdfc, 0xcf5, 0xfff, 0xef6, 0x9fa, 0x8f3, 0xbf9, 0xaf0,
+		0x650, 0x759, 0x453, 0x55a, 0x256, 0x35f, 0x055, 0x15c, 0xe5c, 0xf55, 0xc5f, 0xd56, 0xa5a, 0xb53, 0x859, 0x950,
+		0x7c0, 0x6c9, 0x5c3, 0x4ca, 0x3c6, 0x2cf, 0x1c5, 0x0cc, 0xfcc, 0xec5, 0xdcf, 0xcc6, 0xbca, 0xac3, 0x9c9, 0x8c0,
+		0x8c0, 0x9c9, 0xac3, 0xbca, 0xcc6, 0xdcf, 0xec5, 0xfcc, 0x0cc, 0x1c5, 0x2cf, 0x3c6, 0x4ca, 0x5c3, 0x6c9, 0x7c0,
+		0x950, 0x859, 0xb53, 0xa5a, 0xd56, 0xc5f, 0xf55, 0xe5c, 0x15c, 0x055, 0x35f, 0x256, 0x55a, 0x453, 0x759, 0x650,
+		0xaf0, 0xbf9, 0x8f3, 0x9fa, 0xef6, 0xfff, 0xcf5, 0xdfc, 0x2fc, 0x3f5, 0x0ff, 0x1f6, 0x6fa, 0x7f3, 0x4f9, 0x5f0,
+		0xb60, 0xa69, 0x963, 0x86a, 0xf66, 0xe6f, 0xd65, 0xc6c, 0x36c, 0x265, 0x16f, 0x066, 0x76a, 0x663, 0x569, 0x460,
+		0xca0, 0xda9, 0xea3, 0xfaa, 0x8a6, 0x9af, 0xaa5, 0xbac, 0x4ac, 0x5a5, 0x6af, 0x7a6, 0x0aa, 0x1a3, 0x2a9, 0x3a0,
+		0xd30, 0xc39, 0xf33, 0xe3a, 0x936, 0x83f, 0xb35, 0xa3c, 0x53c, 0x435, 0x73f, 0x636, 0x13a, 0x033, 0x339, 0x230,
+		0xe90, 0xf99, 0xc93, 0xd9a, 0xa96, 0xb9f, 0x895, 0x99c, 0x69c, 0x795, 0x49f, 0x596, 0x29a, 0x393, 0x099, 0x190,
 		0xf00, 0xe09, 0xd03, 0xc0a, 0xb06, 0xa0f, 0x905, 0x80c, 0x70c, 0x605, 0x50f, 0x406, 0x30a, 0x203, 0x109, 0x000
 	};
 
-	static int[,] triTable = new int[,]  
+	private static int[,] triTable = new int[,]
 	{
 		{-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
 		{0, 8, 3, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
@@ -324,11 +318,27 @@ public class GenerateChunks : MonoBehaviour
 		mesh = GetComponent<MeshFilter>().mesh;
 		col = GetComponent<MeshCollider>();
 		GenerateMesh();
+		//GenerateMeshSmooth();
 	}
 
 	// Update is called once per frame
 	private void Update()
 	{
+		if (Input.GetKeyDown (KeyCode.Z))
+		{
+			IsSmoothMeshMode = !IsSmoothMeshMode;
+			if (IsSmoothMeshMode)
+			{
+				GenerateMeshSmooth();
+				Debug.Log("Smooth mesh");
+			}
+			else
+			{
+				GenerateMesh();
+				Debug.Log("Blocky mesh");
+			}
+		}
+		
 	}
 
 	private void UpdateMesh()
@@ -523,6 +533,112 @@ public class GenerateChunks : MonoBehaviour
 		UpdateMesh();
 	}
 
+	public void GenerateMeshSmooth()
+	{
+		
+
+		for (int x = 0; x < chunkSize; x++)
+		{
+			for (int y = 0; y < chunkSize; y++)
+			{
+				for (int z = 0; z < chunkSize; z++)
+				{
+					Vector3[] p = new Vector3[8]; //8
+					double[] val =new double[8]; //8
+					//This code will run for every block in the chunk
+					for (int i = 0; i < 8; i++)
+					{
+						val[i] = 1;
+					}
+
+					if (Block(x, y, z) != 0)
+					{
+						if (Block(x, y + 1, z) == 0)
+						{
+							//Block above is air
+							p[4] = new Vector3(x, y + 1, z);
+							p[5] = new Vector3(x + 1, y + 1, z);
+							p[6] = new Vector3(x, y + 1, z + 1);
+							p[7] = new Vector3(x + 1, y + 1, z + 1);
+							val[0] = 0;
+							val[1] = 0;
+							val[2] = 0;
+							val[3] = 0;
+						}
+
+						if (Block(x, y - 1, z) == 0)
+						{
+							//Block below is air
+							p[0] = new Vector3(x, y - 1, z);
+							p[1] = new Vector3(x + 1, y - 1, z);
+							p[2] = new Vector3(x, y - 1, z + 1);
+							p[3] = new Vector3(x + 1, y - 1, z + 1);
+							val[0] = 0;
+							val[1] = 0;
+							val[2] = 0;
+							val[3] = 0;
+						}
+
+						if (Block(x + 1, y, z) == 0)
+						{
+							//Block east is air
+							p[5] = new Vector3(x + 1, y + 1, z + 1);
+							p[6] = new Vector3(x + 1, y + 1, z);
+							p[1] = new Vector3(x + 1, y, z + 1);
+							p[2] = new Vector3(x + 1, y, z);
+							val[0] = 0;
+							val[1] = 0;
+							val[2] = 0;
+							val[3] = 0;
+						}
+
+						if (Block(x - 1, y, z) == 0)
+						{
+							//Block west is air
+							p[4] = new Vector3(x - 1, y + 1, z);
+							p[7] = new Vector3(x - 1, y + 1, z + 1);
+							p[0] = new Vector3(x - 1, y, z + 1);
+							p[3] = new Vector3(x - 1, y, z);
+							val[0] = 0;
+							val[1] = 0;
+							val[2] = 0;
+							val[3] = 0;
+						}
+
+						if (Block(x, y, z + 1) == 0)
+						{
+							//Block north is air
+							p[7] = new Vector3(x, y + 1, z + 1);
+							p[6] = new Vector3(x + 1, y + 1, z + 1);
+							p[2] = new Vector3(x + 1, y + 1, z + 1);
+							p[3] = new Vector3(x, y, z + 1);
+							val[0] = 0;
+							val[1] = 0;
+							val[2] = 0;
+							val[3] = 0;
+						}
+
+						if (Block(x, y, z - 1) == 0)
+						{
+							//Block south is air
+							p[0] = new Vector3(x, y + 1, z - 1);
+							p[4] = new Vector3(x + 1, y + 1, z - 1);
+							p[5] = new Vector3(x + 1, y + 1, z - 1);
+							p[1] = new Vector3(x, y, z - 1);
+							val[0] = 0;
+							val[1] = 0;
+							val[2] = 0;
+							val[3] = 0;
+						}
+						Polygonise(p,val, 128);
+					}
+				}
+			}
+		}
+
+		UpdateMesh();
+	}
+
 	private byte Block(int x, int y, int z)
 	{
 		return world.Block(x + chunkX, y + chunkY, z + chunkZ);
@@ -530,103 +646,19 @@ public class GenerateChunks : MonoBehaviour
 
 	private void LateUpdate()
 	{
-		if (update)
+		if (update && IsSmoothMeshMode)
+		{
+			GenerateMeshSmooth();
+			update = false;
+		}
+		else if (update && !IsSmoothMeshMode)
 		{
 			GenerateMesh();
 			update = false;
 		}
 	}
 
-	private void CubeTop2(int x, int y, int z, byte block)
-	{
-		newVertices.Add(new Vector3(x, y, z + 1));
-		newVertices.Add(new Vector3(x + 1, y, z + 1));
-		newVertices.Add(new Vector3(x + 1, y, z));
-		newVertices.Add(new Vector3(x, y, z));
-
-		Vector2 texturePos;
-
-		texturePos = tStone;
-
-		Cube(texturePos);
-	}
-
-	private void CubeNorth2(int x, int y, int z, byte block)
-	{
-		//CubeNorth
-		newVertices.Add(new Vector3(x + 1, y - 1, z + 1));
-		newVertices.Add(new Vector3(x + 1, y, z + 1));
-		newVertices.Add(new Vector3(x, y, z + 1));
-		newVertices.Add(new Vector3(x, y - 1, z + 1));
-
-		Vector2 texturePos;
-
-		texturePos = tStone;
-
-		Cube(texturePos);
-	}
-
-	private void CubeEast2(int x, int y, int z, byte block)
-	{
-		//CubeEast
-		newVertices.Add(new Vector3(x + 1, y - 1, z));
-		newVertices.Add(new Vector3(x + 1, y, z));
-		newVertices.Add(new Vector3(x + 1, y, z + 1));
-		newVertices.Add(new Vector3(x + 1, y - 1, z + 1));
-
-		Vector2 texturePos;
-
-		texturePos = tStone;
-
-		Cube(texturePos);
-	}
-
-	private void CubeSouth2(int x, int y, int z, byte block)
-	{
-		//CubeSouth
-		newVertices.Add(new Vector3(x, y - 1, z));
-		newVertices.Add(new Vector3(x, y, z));
-		newVertices.Add(new Vector3(x + 1, y, z));
-		newVertices.Add(new Vector3(x + 1, y - 1, z));
-
-		Vector2 texturePos;
-
-		texturePos = tStone;
-
-		Cube(texturePos);
-	}
-
-	private void CubeWest2(int x, int y, int z, byte block)
-	{
-		//CubeWest
-		newVertices.Add(new Vector3(x, y - 1, z + 1));
-		newVertices.Add(new Vector3(x, y, z + 1));
-		newVertices.Add(new Vector3(x, y, z));
-		newVertices.Add(new Vector3(x, y - 1, z));
-
-		Vector2 texturePos;
-
-		texturePos = tStone;
-
-		Cube(texturePos);
-	}
-
-	private void CubeBot2(int x, int y, int z, byte block)
-	{
-		//CubeBot
-		newVertices.Add(new Vector3(x, y - 1, z));
-		newVertices.Add(new Vector3(x + 1, y - 1, z));
-		newVertices.Add(new Vector3(x + 1, y - 1, z + 1));
-		newVertices.Add(new Vector3(x, y - 1, z + 1));
-
-		Vector2 texturePos;
-
-		texturePos = tStone;
-
-		Cube(texturePos);
-	}
-
-	private void Polygonise(GRIDCELL grid, double isolevel)
+	private void Polygonise(Vector3[] point, double[] value, double isolevel)
 	{
 		int i;
 		int cubeindex;
@@ -637,65 +669,69 @@ public class GenerateChunks : MonoBehaviour
 		   tells us which vertices are inside of the surface
 		*/
 		cubeindex = 0;
-		if (grid.val[0] < isolevel) cubeindex |= 1;
-		if (grid.val[1] < isolevel) cubeindex |= 2;
-		if (grid.val[2] < isolevel) cubeindex |= 4;
-		if (grid.val[3] < isolevel) cubeindex |= 8;
-		if (grid.val[4] < isolevel) cubeindex |= 16;
-		if (grid.val[5] < isolevel) cubeindex |= 32;
-		if (grid.val[6] < isolevel) cubeindex |= 64;
-		if (grid.val[7] < isolevel) cubeindex |= 128;
+		if (value[0] < isolevel) cubeindex |= 1;
+		if (value[1] < isolevel) cubeindex |= 2;
+		if (value[2] < isolevel) cubeindex |= 4;
+		if (value[3] < isolevel) cubeindex |= 8;
+		if (value[4] < isolevel) cubeindex |= 16;
+		if (value[5] < isolevel) cubeindex |= 32;
+		if (value[6] < isolevel) cubeindex |= 64;
+		if (value[7] < isolevel) cubeindex |= 128;
 
 		/* Cube is entirely in/out of the surface */
-// 		if (edgeTable[cubeindex] == 0)
-// 			return (0);
+		// 		if (edgeTable[cubeindex] == 0)
+		// 			return (0);
 
 		/* Find the vertices where the surface intersects the cube */
 		if (edgeTable[cubeindex] == 1)
 			vertlist[0] =
-			   VertexInterp(isolevel, grid.p[0], grid.p[1], grid.val[0], grid.val[1]);
+			   VertexInterp(isolevel, point[0], point[1], value[0], value[1]);
 		if (edgeTable[cubeindex] == 2)
 			vertlist[1] =
-			   VertexInterp(isolevel, grid.p[1], grid.p[2], grid.val[1], grid.val[2]);
+			   VertexInterp(isolevel, point[1], point[2], value[1], value[2]);
 		if (edgeTable[cubeindex] == 4)
 			vertlist[2] =
-			   VertexInterp(isolevel, grid.p[2], grid.p[3], grid.val[2], grid.val[3]);
+			   VertexInterp(isolevel, point[2], point[3], value[2], value[3]);
 		if (edgeTable[cubeindex] == 8)
 			vertlist[3] =
-			   VertexInterp(isolevel, grid.p[3], grid.p[0], grid.val[3], grid.val[0]);
+			   VertexInterp(isolevel, point[3], point[0], value[3], value[0]);
 		if (edgeTable[cubeindex] == 16)
 			vertlist[4] =
-			   VertexInterp(isolevel, grid.p[4], grid.p[5], grid.val[4], grid.val[5]);
+			   VertexInterp(isolevel, point[4], point[5], value[4], value[5]);
 		if (edgeTable[cubeindex] == 32)
 			vertlist[5] =
-			   VertexInterp(isolevel, grid.p[5], grid.p[6], grid.val[5], grid.val[6]);
+			   VertexInterp(isolevel, point[5], point[6], value[5], value[6]);
 		if (edgeTable[cubeindex] == 64)
 			vertlist[6] =
-			   VertexInterp(isolevel, grid.p[6], grid.p[7], grid.val[6], grid.val[7]);
+			   VertexInterp(isolevel, point[6], point[7], value[6], value[7]);
 		if (edgeTable[cubeindex] == 128)
 			vertlist[7] =
-			   VertexInterp(isolevel, grid.p[7], grid.p[4], grid.val[7], grid.val[4]);
+			   VertexInterp(isolevel, point[7], point[4], value[7], value[4]);
 		if (edgeTable[cubeindex] == 256)
 			vertlist[8] =
-			   VertexInterp(isolevel, grid.p[0], grid.p[4], grid.val[0], grid.val[4]);
+			   VertexInterp(isolevel, point[0], point[4], value[0], value[4]);
 		if (edgeTable[cubeindex] == 512)
 			vertlist[9] =
-			   VertexInterp(isolevel, grid.p[1], grid.p[5], grid.val[1], grid.val[5]);
+			   VertexInterp(isolevel, point[1], point[5], value[1], value[5]);
 		if (edgeTable[cubeindex] == 1024)
 			vertlist[10] =
-			   VertexInterp(isolevel, grid.p[2], grid.p[6], grid.val[2], grid.val[6]);
+			   VertexInterp(isolevel, point[2], point[6], value[2], value[6]);
 		if (edgeTable[cubeindex] == 2048)
 			vertlist[11] =
-			   VertexInterp(isolevel, grid.p[3], grid.p[7], grid.val[3], grid.val[7]);
+			   VertexInterp(isolevel, point[3], point[7], value[3], value[7]);
 
 		/* Create the triangle */
 
 		for (i = 0; triTable[cubeindex, i] != -1; i += 3)
 		{
-			newVertices.Add(vertlist[triTable[cubeindex,i]]);
-			newVertices.Add(vertlist[triTable[cubeindex,i+1]]);
-			newVertices.Add(vertlist[triTable[cubeindex,i+2]]);
-			Cube();
+			newVertices.Add(vertlist[triTable[cubeindex, i]]);
+			newVertices.Add(vertlist[triTable[cubeindex, i + 1]]);
+			newVertices.Add(vertlist[triTable[cubeindex, i + 2]]);
+			newTriangles.Add(faceCount * 4); //1
+			newTriangles.Add(faceCount * 4 + 1); //2
+			newTriangles.Add(faceCount * 4 + 2); //3
+			faceCount++;
+			//Cube();
 		}
 	}
 

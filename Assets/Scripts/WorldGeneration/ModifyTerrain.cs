@@ -35,10 +35,12 @@ public class ModifyTerrain : MonoBehaviour
 			if (multiplierLoading == 1)
 			{
 				multiplierLoading = 100;
+				Debug.Log("ChunkLoadingDistance = High");
 			}
 			else
 			{
 				multiplierLoading = 1;
+				Debug.Log("ChunkLoadingDistance = low");
 			}
 		}
 	}
