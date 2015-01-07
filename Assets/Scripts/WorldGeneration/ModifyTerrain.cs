@@ -220,14 +220,14 @@ public class ModifyTerrain : MonoBehaviour
 					{
 						if (world.chunks[x, y, z] == null)
 						{
-							world.GenColumn(x,y, z);
+							world.GenChunk(x,y, z);
 						}
 					}
 					else if (BlockDistanceFromCenter > Mathf.Pow(distToUnload, 2))
 					{
 						if (world.chunks[x, y, z] != null)
 						{
-							world.UnloadColumn(x,y, z);
+							world.UnloadChunk(x,y, z);
 						}
 					}
 				}

@@ -11,6 +11,8 @@ public class GenerateWorld : MonoBehaviour
 	public int worldY = 128;
 	public int worldZ = 128;
 
+	public bool isSmoothMeshMode = false;
+
 	// Use this for initialization
 	private void Start()
 	{
@@ -75,6 +77,16 @@ public class GenerateWorld : MonoBehaviour
 	// Update is called once per frame
 	private void Update()
 	{
+		if (Input.GetKeyDown(KeyCode.Z))
+		{
+			isSmoothMeshMode = !isSmoothMeshMode;
+			Debug.Log("isSmoothMeshMode: " + isSmoothMeshMode);
+			foreach (GenerateChunks i in chunks)
+			{
+				//i.ToggleMeshMode();
+				
+			}
+		}
 	}
 
 	public byte Block(int x, int y, int z)
@@ -101,9 +113,8 @@ public class GenerateWorld : MonoBehaviour
 		return (int)rValue;
 	}
 
-	public void GenColumn(int x, int y, int z)
+	public void GenChunk(int x, int y, int z)
 	{
-
 		GameObject newChunk = Instantiate(chunk,
 new Vector3(x * chunkSize - 0.5f, y * chunkSize + 0.5f, z * chunkSize - 0.5f),
 new Quaternion(0, 0, 0, 0)) as GameObject;
@@ -114,10 +125,9 @@ new Quaternion(0, 0, 0, 0)) as GameObject;
 		chunks[x, y, z].chunkX = x * chunkSize;
 		chunks[x, y, z].chunkY = y * chunkSize;
 		chunks[x, y, z].chunkZ = z * chunkSize;
-
 	}
 
-	public void UnloadColumn(int x,int y, int z)
+	public void UnloadChunk(int x,int y, int z)
 	{
 		Object.Destroy(chunks[x, y, z].gameObject);
 	}

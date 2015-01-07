@@ -29,7 +29,7 @@ public class GenerateChunks : MonoBehaviour
 	public int chunkZ;
 
 	public bool update;
-	bool IsSmoothMeshMode = false;
+	bool IsSmoothMeshMode;
 
 	private static int[] edgeTable = new int[]
 	{
@@ -317,27 +317,20 @@ public class GenerateChunks : MonoBehaviour
 		world = worldGO.GetComponent("GenerateWorld") as GenerateWorld;
 		mesh = GetComponent<MeshFilter>().mesh;
 		col = GetComponent<MeshCollider>();
-		GenerateMesh();
-		//GenerateMeshSmooth();
+
+		if (IsSmoothMeshMode)
+		{
+			GenerateMeshSmooth();
+		}
+		else
+		{
+			GenerateMesh();
+		}
 	}
 
 	// Update is called once per frame
 	private void Update()
 	{
-		if (Input.GetKeyDown (KeyCode.Z))
-		{
-			IsSmoothMeshMode = !IsSmoothMeshMode;
-			if (IsSmoothMeshMode)
-			{
-				GenerateMeshSmooth();
-				Debug.Log("Smooth mesh");
-			}
-			else
-			{
-				GenerateMesh();
-				Debug.Log("Blocky mesh");
-			}
-		}
 		
 	}
 
@@ -535,8 +528,6 @@ public class GenerateChunks : MonoBehaviour
 
 	public void GenerateMeshSmooth()
 	{
-		
-
 		for (int x = 0; x < chunkSize; x++)
 		{
 			for (int y = 0; y < chunkSize; y++)
@@ -757,5 +748,12 @@ public class GenerateChunks : MonoBehaviour
 		p.z = (float)(p1.z + mu * (p2.z - p1.z));
 
 		return (p);
+	}
+
+	public void ToggleMeshMode()
+	{
+		IsSmoothMeshMode = !IsSmoothMeshMode;
+		update = true;
+		UpdateMesh();
 	}
 }
