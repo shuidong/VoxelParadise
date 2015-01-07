@@ -317,7 +317,7 @@ public class GenerateChunks : MonoBehaviour
 		world = worldGO.GetComponent("GenerateWorld") as GenerateWorld;
 		mesh = GetComponent<MeshFilter>().mesh;
 		col = GetComponent<MeshCollider>();
-
+		IsSmoothMeshMode = world.isSmoothMeshMode;
 		if (IsSmoothMeshMode)
 		{
 			GenerateMeshSmooth();

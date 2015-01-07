@@ -83,7 +83,11 @@ public class GenerateWorld : MonoBehaviour
 			Debug.Log("isSmoothMeshMode: " + isSmoothMeshMode);
 			foreach (GenerateChunks i in chunks)
 			{
-				//i.ToggleMeshMode();
+				if (i != null)
+				{
+					i.ToggleMeshMode();
+				}
+				
 				
 			}
 		}
