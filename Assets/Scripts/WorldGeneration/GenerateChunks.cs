@@ -318,14 +318,9 @@ public class GenerateChunks : MonoBehaviour
 		mesh = GetComponent<MeshFilter>().mesh;
 		col = GetComponent<MeshCollider>();
 		IsSmoothMeshMode = world.isSmoothMeshMode;
-		if (IsSmoothMeshMode)
-		{
-			GenerateMeshSmooth();
-		}
-		else
-		{
-			GenerateMesh();
-		}
+
+		if (IsSmoothMeshMode) GenerateMeshSmooth();
+		else GenerateMesh();
 	}
 
 	// Update is called once per frame
